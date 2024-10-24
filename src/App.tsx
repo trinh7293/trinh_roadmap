@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import {
   ReactFlow,
   useNodesState,
@@ -14,16 +14,14 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 
-import './index.css'
+import TextUpdaterNode from './components/TextUpdaterNode'
+import { onTextChangeFunc } from './types'
 
-const initialNodes: Node[] = [
-  {
-    id: '0',
-    type: 'input',
-    data: { label: 'Node' },
-    position: { x: 0, y: 50 }
-  }
-]
+const nodeTypes = {
+  textUpdater: TextUpdaterNode
+}
+
+const initialNodes: Node[] = []
 
 const initialEdges: Edge[] = []
 
@@ -36,8 +34,36 @@ const AddNodeOnEdgeDrop = () => {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
+
   const { screenToFlowPosition } = useReactFlow()
   const onConnect: OnConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [])
+  const onTextChange: onTextChangeFunc = useCallback((text: string, nodeId: string) => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id !== nodeId) {
+          return node
+        }
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            label: text
+          }
+        }
+      })
+    )
+  }, [])
+
+  useEffect(() => {
+    setNodes([
+      {
+        id: '0',
+        type: 'textUpdater',
+        data: { onTextChange: onTextChange },
+        position: { x: 0, y: 50 }
+      }
+    ])
+  }, [])
 
   const onConnectEnd: OnConnectEnd = useCallback(
     (event, connectionState) => {
@@ -48,11 +74,12 @@ const AddNodeOnEdgeDrop = () => {
         const { clientX, clientY } = 'changedTouches' in event ? event.changedTouches[0] : event
         const newNode: Node = {
           id,
+          type: 'textUpdater',
           position: screenToFlowPosition({
             x: clientX,
             y: clientY
           }),
-          data: { label: `Node ${id}` },
+          data: { onTextChange: onTextChange },
           origin: [0.5, 0.0]
         }
 
@@ -72,6 +99,7 @@ const AddNodeOnEdgeDrop = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        nodeTypes={nodeTypes}
         onConnectEnd={onConnectEnd}
         fitView
         fitViewOptions={{ padding: 2 }}
