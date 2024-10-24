@@ -9,7 +9,8 @@ import {
   OnConnect,
   OnConnectEnd,
   Node,
-  Edge
+  Edge,
+  Background
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 
@@ -75,7 +76,9 @@ const AddNodeOnEdgeDrop = () => {
         fitView
         fitViewOptions={{ padding: 2 }}
         nodeOrigin={nodeOrigin}
-      />
+      >
+        <Background />
+      </ReactFlow>
     </div>
   )
 }
