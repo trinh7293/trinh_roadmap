@@ -1,35 +1,32 @@
 import { useCallback, useEffect, useRef } from 'react'
 import {
   ReactFlow,
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  useReactFlow,
   ReactFlowProvider,
-  OnConnect,
-  OnConnectEnd,
   Edge,
   Background,
   Position,
-  Panel
+  Panel,
+  NodeOrigin,
+  OnConnectEnd,
+  useReactFlow
 } from '@xyflow/react'
 import dagre from '@dagrejs/dagre'
 import '@xyflow/react/dist/style.css'
+import { useShallow } from 'zustand/react/shallow'
+import useStore from './store'
 
 import TextUpdaterNode from './components/TextUpdaterNode'
-import { CustomNode, onTextChangeFunc } from './types'
+import { AppState, CustomNode } from './types'
 import { nanoid } from 'nanoid/non-secure'
-const edgeType = 'smoothstep'
 
 const nodeTypes = {
   textUpdater: TextUpdaterNode
 }
 
-const initialNodes: CustomNode[] = []
-const initialEdges: Edge[] = []
 const nodeWidth = 172
 const nodeHeight = 40
 const defaultLabel = 'New Node'
+const edgeType = 'smoothstep'
 
 const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}))
 
@@ -67,49 +64,40 @@ const getLayoutedElements = (nodes: CustomNode[], edges: Edge[], direction = 'TB
   return { nodes: newNodes, edges }
 }
 
-// const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(initialNodes, initialEdges)
+const nodeOrigin: NodeOrigin = [0.5, 0]
 
-const nodeOrigin: [number, number] = [0.5, 0]
+const selector = (state: AppState) => ({
+  nodes: state.nodes,
+  edges: state.edges,
+  onNodesChange: state.onNodesChange,
+  onEdgesChange: state.onEdgesChange,
+  onConnect: state.onConnect,
+  addNewNode: state.addNewNode,
+  addNewEdge: state.addNewEdge,
+  setNodes: state.setNodes,
+  setEdges: state.setEdges
+})
 
 const AddNodeOnEdgeDrop = () => {
   const reactFlowWrapper = useRef(null)
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
-
+  // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
+  // const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
+  const { nodes, edges, addNewNode, addNewEdge, setNodes, setEdges, onNodesChange, onEdgesChange, onConnect } =
+    useStore(useShallow(selector))
   const { screenToFlowPosition } = useReactFlow()
-  const onConnect: OnConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [])
-  const onTextChange: onTextChangeFunc = useCallback((text: string, nodeId: string) => {
-    setNodes((nds) =>
-      nds.map((node) => {
-        if (node.id !== nodeId) {
-          return node
-        }
-        return {
-          ...node,
-          data: {
-            ...node.data,
-            label: text
-          }
-        }
-      })
-    )
-  }, [])
-
   useEffect(() => {
     const newNodeId = nanoid()
     const firstNode: CustomNode = {
       id: newNodeId,
       type: 'textUpdater',
-      data: { onTextChange: onTextChange, label: defaultLabel },
+      data: { label: defaultLabel },
       position: { x: 0, y: 50 }
     }
-    setNodes([firstNode])
+    addNewNode(firstNode)
   }, [])
-
   const onConnectEnd: OnConnectEnd = useCallback(
     (event, connectionState) => {
-      // when a connection is dropped on the pane it's not valid
       if (!connectionState.isValid) {
         // we need to remove the wrapper bounds, in order to get the correct position
         const { clientX, clientY } = 'changedTouches' in event ? event.changedTouches[0] : event
@@ -121,11 +109,11 @@ const AddNodeOnEdgeDrop = () => {
             x: clientX,
             y: clientY
           }),
-          data: { onTextChange: onTextChange, label: defaultLabel },
+          data: { label: defaultLabel },
           origin: [0.5, 0.0]
         }
 
-        setNodes((nds) => nds.concat(newNode))
+        addNewNode(newNode)
         const newEdgeId = nanoid()
         const newEdge: Edge = {
           id: newEdgeId,
@@ -134,7 +122,7 @@ const AddNodeOnEdgeDrop = () => {
           source: connectionState?.fromNode?.id || '',
           target: newNodeId
         }
-        setEdges((eds) => eds.concat(newEdge))
+        addNewEdge(newEdge)
       }
     },
     [screenToFlowPosition]

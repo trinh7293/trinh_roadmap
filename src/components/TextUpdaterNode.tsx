@@ -1,11 +1,17 @@
 import { memo } from 'react'
 import { Handle, Position } from '@xyflow/react'
-import { CustomNodeProps } from '../types'
+import { AppState, CustomNodeProps } from '../types'
+import useStore from '../store'
+import { useShallow } from 'zustand/react/shallow'
 
-export default memo(function ColorSel({ data, isConnectable, id: nodeId }: CustomNodeProps) {
+const selector = (state: AppState) => ({
+  updateNodeLabel: state.updateNodeLabel
+})
+export default memo(function ColorSel({ id: nodeId, data, isConnectable }: CustomNodeProps) {
+  const { updateNodeLabel } = useStore(useShallow(selector))
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const text = event.target.value
-    data.onTextChange(text, nodeId)
+    const label = event.target.value
+    updateNodeLabel(nodeId, label)
   }
   return (
     <>
