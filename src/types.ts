@@ -16,6 +16,9 @@ export type AddNewNode = (node: CustomNode) => void
 export type AddNewEdge = (edge: Edge) => void
 
 export type AppState = {
+  user: {
+    id: string
+  }
   nodes: CustomNode[]
   edges: Edge[]
   onNodesChange: OnNodesChange<CustomNode>
@@ -26,4 +29,16 @@ export type AppState = {
   addNewEdge: AddNewEdge
   setNodes: (nodes: CustomNode[]) => void
   setEdges: (edges: Edge[]) => void
+  setDataLocal: HandleDataFromServer
 }
+
+export type UserDoc = {
+  flowData: FlowData
+}
+
+export type FlowData = {
+  nodes: CustomNode[]
+  edges: Edge[]
+}
+
+export type HandleDataFromServer = (data: FlowData) => void

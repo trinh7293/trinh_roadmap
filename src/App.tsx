@@ -18,6 +18,7 @@ import useStore from './store'
 import TextUpdaterNode from './components/TextUpdaterNode'
 import { AppState, CustomNode } from './types'
 import { nanoid } from 'nanoid/non-secure'
+import { getUserFlowDataServer, setUserFlowDataServer } from './services/flowService'
 
 const nodeTypes = {
   textUpdater: TextUpdaterNode
@@ -67,6 +68,7 @@ const getLayoutedElements = (nodes: CustomNode[], edges: Edge[], direction = 'TB
 const nodeOrigin: NodeOrigin = [0.5, 0]
 
 const selector = (state: AppState) => ({
+  user: state.user,
   nodes: state.nodes,
   edges: state.edges,
   onNodesChange: state.onNodesChange,
@@ -75,7 +77,8 @@ const selector = (state: AppState) => ({
   addNewNode: state.addNewNode,
   addNewEdge: state.addNewEdge,
   setNodes: state.setNodes,
-  setEdges: state.setEdges
+  setEdges: state.setEdges,
+  setDataLocal: state.setDataLocal
 })
 
 const AddNodeOnEdgeDrop = () => {
@@ -83,18 +86,24 @@ const AddNodeOnEdgeDrop = () => {
 
   // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   // const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
-  const { nodes, edges, addNewNode, addNewEdge, setNodes, setEdges, onNodesChange, onEdgesChange, onConnect } =
-    useStore(useShallow(selector))
+  const {
+    user,
+    nodes,
+    edges,
+    addNewNode,
+    addNewEdge,
+    setNodes,
+    setEdges,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    setDataLocal
+  } = useStore(useShallow(selector))
   const { screenToFlowPosition } = useReactFlow()
   useEffect(() => {
-    const newNodeId = nanoid()
-    const firstNode: CustomNode = {
-      id: newNodeId,
-      type: 'textUpdater',
-      data: { label: defaultLabel },
-      position: { x: 0, y: 50 }
+    if (user) {
+      getUserFlowDataServer(user.id, setDataLocal)
     }
-    addNewNode(firstNode)
   }, [])
   const onConnectEnd: OnConnectEnd = useCallback(
     (event, connectionState) => {
@@ -136,6 +145,13 @@ const AddNodeOnEdgeDrop = () => {
     },
     [nodes, edges]
   )
+  const handleSave = async () => {
+    const flowData = {
+      nodes,
+      edges
+    }
+    await setUserFlowDataServer(user.id, flowData)
+  }
 
   return (
     <div className='wrapper' ref={reactFlowWrapper}>
@@ -154,6 +170,7 @@ const AddNodeOnEdgeDrop = () => {
         <Panel position='top-right'>
           <button onClick={() => onLayout('TB')}>vertical layout</button>
           <button onClick={() => onLayout('LR')}>horizontal layout</button>
+          <button onClick={() => handleSave()}>SAVE to firestore</button>
         </Panel>
         <Background />
       </ReactFlow>

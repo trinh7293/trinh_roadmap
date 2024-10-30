@@ -5,6 +5,9 @@ import { type AppState } from './types'
 
 // this is our useStore hook that we can use in our components to get parts of the store and call actions
 const useStore = create<AppState>((set, get) => ({
+  user: {
+    id: 'trinh'
+  },
   nodes: [],
   edges: [],
   onNodesChange: (changes) => {
@@ -45,11 +48,17 @@ const useStore = create<AppState>((set, get) => ({
       edges: [...get().edges, newEdge]
     })
   },
-  setNodes: (nodes) => {
+  setNodes: (nodes = []) => {
     set({ nodes })
   },
-  setEdges: (edges) => {
+  setEdges: (edges = []) => {
     set({ edges })
+  },
+  setDataLocal(data) {
+    set({
+      nodes: data.nodes || [],
+      edges: data.edges || []
+    })
   }
 }))
 
