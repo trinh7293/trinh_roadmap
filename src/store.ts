@@ -28,7 +28,7 @@ const useStore = create<AppState>((set, get) => ({
       nodes: get().nodes.map((node) => {
         if (node.id === nodeId) {
           // it's important to create a new object here, to inform React Flow about the changes
-          node.data = { ...node.data, label }
+          return { ...node, data: { ...node.data, label } }
         }
 
         return node
