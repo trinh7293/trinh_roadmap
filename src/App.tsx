@@ -8,7 +8,8 @@ import {
   Panel,
   NodeOrigin,
   OnConnectEnd,
-  useReactFlow
+  useReactFlow,
+  XYPosition
 } from '@xyflow/react'
 import dagre from '@dagrejs/dagre'
 import '@xyflow/react/dist/style.css'
@@ -19,6 +20,7 @@ import TextUpdaterNode from './components/TextUpdaterNode'
 import { AppState, CustomNode } from './types'
 import { nanoid } from 'nanoid/non-secure'
 import { getUserFlowDataServer, setUserFlowDataServer } from './services/flowService'
+import { DEFAULT_LABEL, EDGE_TYPE } from './constants'
 
 const nodeTypes = {
   textUpdater: TextUpdaterNode
@@ -26,8 +28,6 @@ const nodeTypes = {
 
 const nodeWidth = 300
 const nodeHeight = 40
-const defaultLabel = 'New Node'
-const edgeType = 'smoothstep'
 
 const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}))
 
@@ -40,6 +40,8 @@ const getLayoutedElements = (nodes: CustomNode[], edges: Edge[], direction = 'TB
   })
 
   edges.forEach((edge) => {
+    edge.type = EDGE_TYPE
+    edge.animated = true
     dagreGraph.setEdge(edge.source, edge.target)
   })
 
@@ -81,6 +83,18 @@ const selector = (state: AppState) => ({
   setDataLocal: state.setDataLocal
 })
 
+const initNewNode = (position: XYPosition) => {
+  const newNodeId = nanoid()
+  const newNode: CustomNode = {
+    id: newNodeId,
+    type: 'textUpdater',
+    position,
+    data: { label: DEFAULT_LABEL },
+    origin: [0.5, 0.0]
+  }
+  return newNode
+}
+
 const AddNodeOnEdgeDrop = () => {
   const reactFlowWrapper = useRef(null)
 
@@ -110,26 +124,20 @@ const AddNodeOnEdgeDrop = () => {
       if (!connectionState.isValid) {
         // we need to remove the wrapper bounds, in order to get the correct position
         const { clientX, clientY } = 'changedTouches' in event ? event.changedTouches[0] : event
-        const newNodeId = nanoid()
-        const newNode: CustomNode = {
-          id: newNodeId,
-          type: 'textUpdater',
-          position: screenToFlowPosition({
-            x: clientX,
-            y: clientY
-          }),
-          data: { label: defaultLabel },
-          origin: [0.5, 0.0]
-        }
+        const newNodePosition = screenToFlowPosition({
+          x: clientX,
+          y: clientY
+        })
+        const newNode = initNewNode(newNodePosition)
 
         addNewNode(newNode)
         const newEdgeId = nanoid()
         const newEdge: Edge = {
           id: newEdgeId,
-          type: edgeType,
+          type: EDGE_TYPE,
           animated: true,
           source: connectionState?.fromNode?.id || '',
-          target: newNodeId
+          target: newNode.id
         }
         addNewEdge(newEdge)
       }
@@ -152,6 +160,14 @@ const AddNodeOnEdgeDrop = () => {
     }
     await setUserFlowDataServer(user.id, flowData)
   }
+  const handleNewNodeBtn = useCallback(() => {
+    const position = {
+      x: Math.random() * 500,
+      y: Math.random() * 500
+    }
+    const newNode = initNewNode(position)
+    addNewNode(newNode)
+  }, [])
 
   return (
     <div className='wrapper' ref={reactFlowWrapper}>
@@ -168,6 +184,7 @@ const AddNodeOnEdgeDrop = () => {
         nodeOrigin={nodeOrigin}
       >
         <Panel position='top-right'>
+          <button onClick={() => handleNewNodeBtn()}>ADD NEW NODE</button>
           <button onClick={() => onLayout('TB')}>vertical layout</button>
           <button onClick={() => onLayout('LR')}>horizontal layout</button>
           <button onClick={() => handleSave()}>SAVE to firestore</button>

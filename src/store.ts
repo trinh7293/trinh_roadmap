@@ -1,7 +1,9 @@
 import { create } from 'zustand'
-import { addEdge, applyNodeChanges, applyEdgeChanges } from '@xyflow/react'
+import { applyNodeChanges, applyEdgeChanges, Edge } from '@xyflow/react'
 
 import { type AppState } from './types'
+import { nanoid } from 'nanoid/non-secure'
+import { EDGE_TYPE } from './constants'
 
 // this is our useStore hook that we can use in our components to get parts of the store and call actions
 const useStore = create<AppState>((set, get) => ({
@@ -21,8 +23,16 @@ const useStore = create<AppState>((set, get) => ({
     })
   },
   onConnect: (connection) => {
+    const newEdgeId = nanoid()
+    const newEdge: Edge = {
+      id: newEdgeId,
+      type: EDGE_TYPE,
+      animated: true,
+      source: connection.source,
+      target: connection.target
+    }
     set({
-      edges: addEdge(connection, get().edges)
+      edges: [...get().edges, newEdge]
     })
   },
 
