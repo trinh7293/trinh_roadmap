@@ -24,7 +24,7 @@ const nodeTypes = {
   textUpdater: TextUpdaterNode
 }
 
-const nodeWidth = 172
+const nodeWidth = 300
 const nodeHeight = 40
 const defaultLabel = 'New Node'
 const edgeType = 'smoothstep'

@@ -7,7 +7,13 @@ import { useShallow } from 'zustand/react/shallow'
 const selector = (state: AppState) => ({
   updateNodeLabel: state.updateNodeLabel
 })
-export default memo(function ColorSel({ id: nodeId, data, isConnectable }: CustomNodeProps) {
+export default memo(function ColorSel({
+  id: nodeId,
+  data,
+  isConnectable,
+  sourcePosition,
+  targetPosition
+}: CustomNodeProps) {
   const { updateNodeLabel } = useStore(useShallow(selector))
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const label = event.target.value
@@ -17,14 +23,14 @@ export default memo(function ColorSel({ id: nodeId, data, isConnectable }: Custo
     <>
       <Handle
         type='target'
-        position={Position.Top}
+        position={targetPosition || Position.Top}
         onConnect={(params) => console.log('handle onConnect', params)}
         isConnectable={isConnectable}
       />
       <div>
         <input type='text' value={data.label} onChange={handleChange} className='nodrag' />
       </div>
-      <Handle type='source' position={Position.Bottom} id='a' isConnectable={isConnectable} />
+      <Handle type='source' position={sourcePosition || Position.Bottom} id='a' isConnectable={isConnectable} />
     </>
   )
 })
