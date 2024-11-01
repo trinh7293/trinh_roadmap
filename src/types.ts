@@ -18,6 +18,10 @@ export type AddNewEdge = (edge: Edge) => void
 export type AppState = {
   user: {
     id: string
+    boards: string[]
+  }
+  currentBoard: {
+    id: string
   }
   nodes: CustomNode[]
   edges: Edge[]
@@ -33,6 +37,14 @@ export type AppState = {
 }
 
 export type UserDoc = {
+  id: string
+  boards: string[] // boards that owned by this user
+}
+
+export type BoardDoc = {
+  id: string
+  ownerId: string // user who own this board
+  memberId: string[] // list member of this board
   flowData: FlowData
 }
 

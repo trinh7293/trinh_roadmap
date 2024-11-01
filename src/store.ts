@@ -8,7 +8,11 @@ import { EDGE_TYPE } from './constants'
 // this is our useStore hook that we can use in our components to get parts of the store and call actions
 const useStore = create<AppState>((set, get) => ({
   user: {
-    id: 'trinh'
+    id: 'trinh',
+    boards: ['trinh_board_1']
+  },
+  currentBoard: {
+    id: 'trinh_board_1'
   },
   nodes: [],
   edges: [],

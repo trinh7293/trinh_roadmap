@@ -19,7 +19,7 @@ import useStore from './store'
 import TextUpdaterNode from './components/TextUpdaterNode'
 import { AppState, CustomNode } from './types'
 import { nanoid } from 'nanoid/non-secure'
-import { getUserFlowDataServer, setUserFlowDataServer } from './services/flowService'
+import { getBoardData, setBoardData } from './services/flowService'
 import { DEFAULT_LABEL, EDGE_TYPE } from './constants'
 
 const nodeTypes = {
@@ -70,7 +70,7 @@ const getLayoutedElements = (nodes: CustomNode[], edges: Edge[], direction = 'TB
 const nodeOrigin: NodeOrigin = [0.5, 0]
 
 const selector = (state: AppState) => ({
-  user: state.user,
+  currentBoard: state.currentBoard,
   nodes: state.nodes,
   edges: state.edges,
   onNodesChange: state.onNodesChange,
@@ -101,7 +101,7 @@ const AddNodeOnEdgeDrop = () => {
   // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   // const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
   const {
-    user,
+    currentBoard,
     nodes,
     edges,
     addNewNode,
@@ -115,8 +115,8 @@ const AddNodeOnEdgeDrop = () => {
   } = useStore(useShallow(selector))
   const { screenToFlowPosition } = useReactFlow()
   useEffect(() => {
-    if (user) {
-      getUserFlowDataServer(user.id, setDataLocal)
+    if (currentBoard) {
+      getBoardData(currentBoard.id, setDataLocal)
     }
   }, [])
   const onConnectEnd: OnConnectEnd = useCallback(
@@ -158,7 +158,7 @@ const AddNodeOnEdgeDrop = () => {
       nodes,
       edges
     }
-    await setUserFlowDataServer(user.id, flowData)
+    await setBoardData(currentBoard.id, flowData)
   }
   const handleNewNodeBtn = useCallback(() => {
     const position = {
