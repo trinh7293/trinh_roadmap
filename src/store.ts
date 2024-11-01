@@ -17,6 +17,7 @@ const useStore = create<AppState>((set, get) => ({
   nodes: [],
   edges: [],
   onNodesChange: (changes) => {
+    console.log('onNodesChange', JSON.stringify(changes, null, 2))
     set({
       nodes: applyNodeChanges(changes, get().nodes)
     })

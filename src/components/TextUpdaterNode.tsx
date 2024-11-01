@@ -1,23 +1,28 @@
 import { memo } from 'react'
 import { Handle, Position } from '@xyflow/react'
-import { AppState, CustomNodeProps } from '../types'
-import useStore from '../store'
-import { useShallow } from 'zustand/react/shallow'
+import { CustomNodeProps } from '../types'
+import { useSyncedStore } from '@syncedstore/react'
+import { liveStore } from '@/liveStore'
 
-const selector = (state: AppState) => ({
-  updateNodeLabel: state.updateNodeLabel
-})
-export default memo(function ColorSel({
+// const selector = (state: AppState) => ({
+//   updateNodeLabel: state.updateNodeLabel
+// })
+export default memo(function TextInputNode({
   id: nodeId,
   data,
   isConnectable,
   sourcePosition,
   targetPosition
 }: CustomNodeProps) {
-  const { updateNodeLabel } = useStore(useShallow(selector))
+  // const { updateNodeLabel } = useStore(useShallow(selector))
+  const state = useSyncedStore(liveStore)
+  const node = state.nodes.find((n) => n.id === nodeId)
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const label = event.target.value
-    updateNodeLabel(nodeId, label)
+    const newLabel = event.target.value
+    // updateNodeLabel(nodeId, label)
+    if (node) {
+      node.data.label = newLabel
+    }
   }
   return (
     <>
@@ -28,9 +33,19 @@ export default memo(function ColorSel({
         isConnectable={isConnectable}
       />
       <div>
-        <input type='text' value={data.label} onChange={handleChange} className='nodrag' />
+        <input
+          type='text'
+          value={data.label}
+          onChange={handleChange}
+          className='nodrag'
+        />
       </div>
-      <Handle type='source' position={sourcePosition || Position.Bottom} id='a' isConnectable={isConnectable} />
+      <Handle
+        type='source'
+        position={sourcePosition || Position.Bottom}
+        id='a'
+        isConnectable={isConnectable}
+      />
     </>
   )
 })
