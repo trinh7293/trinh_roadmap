@@ -1,4 +1,11 @@
-import { Edge, Node, NodeProps, OnConnect, OnEdgesChange, OnNodesChange } from '@xyflow/react'
+import {
+  Edge,
+  Node,
+  NodeProps,
+  OnConnect,
+  OnEdgesChange,
+  OnNodesChange
+} from '@xyflow/react'
 
 export type onTextChangeFunc = (nodeId: string, label: string) => void
 

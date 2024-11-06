@@ -16,7 +16,10 @@ export const getUserData = async (userId: string): Promise<string[]> => {
   }
 }
 
-export const getBoardData = async (boardId: string, callback: HandleDataFromServer) => {
+export const getBoardData = async (
+  boardId: string,
+  callback: HandleDataFromServer
+) => {
   const boardRef = doc(db, BOARD_COLLECTION, boardId)
   const boardSnap = await getDoc(boardRef)
   if (boardSnap.exists()) {
