@@ -1,80 +1,24 @@
 import { create } from 'zustand'
-import { applyNodeChanges, applyEdgeChanges, Edge } from '@xyflow/react'
 
 import { type AppState } from './types'
-import { nanoid } from 'nanoid/non-secure'
-import { EDGE_TYPE } from './constants'
+import { fetchUserFlows } from './services/flowService'
 
 // this is our useStore hook that we can use in our components to get parts of the store and call actions
-const useStore = create<AppState>((set, get) => ({
+const useMainStore = create<AppState>((set, get) => ({
   user: {
-    id: 'trinh',
-    boards: ['trinh_board_1']
+    id: 'trinh1Id',
+    name: 'trinh 1 Name'
   },
-  currentBoard: {
-    id: 'trinh_board_1'
-  },
-  nodes: [],
-  edges: [],
-  onNodesChange: (changes) => {
-    console.log('onNodesChange', JSON.stringify(changes, null, 2))
+  flows: [],
+  currentFlowMems: [],
+  getUserFlows: async () => {
+    const user = get().user
+    const userId = user.id
+    const flows = await fetchUserFlows(userId)
     set({
-      nodes: applyNodeChanges(changes, get().nodes)
-    })
-  },
-  onEdgesChange: (changes) => {
-    set({
-      edges: applyEdgeChanges(changes, get().edges)
-    })
-  },
-  onConnect: (connection) => {
-    const newEdgeId = nanoid()
-    const newEdge: Edge = {
-      id: newEdgeId,
-      type: EDGE_TYPE,
-      animated: true,
-      source: connection.source,
-      target: connection.target
-    }
-    set({
-      edges: [...get().edges, newEdge]
-    })
-  },
-
-  updateNodeLabel: (nodeId, label) => {
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === nodeId) {
-          // it's important to create a new object here, to inform React Flow about the changes
-          return { ...node, data: { ...node.data, label } }
-        }
-
-        return node
-      })
-    })
-  },
-  addNewNode: (newNode) => {
-    set({
-      nodes: [...get().nodes, newNode]
-    })
-  },
-  addNewEdge: (newEdge) => {
-    set({
-      edges: [...get().edges, newEdge]
-    })
-  },
-  setNodes: (nodes = []) => {
-    set({ nodes })
-  },
-  setEdges: (edges = []) => {
-    set({ edges })
-  },
-  setDataLocal(data) {
-    set({
-      nodes: data.nodes || [],
-      edges: data.edges || []
+      flows
     })
   }
 }))
 
-export default useStore
+export default useMainStore

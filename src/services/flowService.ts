@@ -1,38 +1,31 @@
+import { FLOW_COLLECTION, USER_FLOW_MEMBER_COLLECTION } from '@/constants'
 import { db } from '../firebase'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { BoardDoc, FlowData, HandleDataFromServer, UserDoc } from '../types'
-import { BOARD_COLLECTION, USER_COLLECTION } from '../constants'
+import { collection, getDocs, query, where } from 'firebase/firestore'
 
-export const getUserData = async (userId: string): Promise<string[]> => {
-  const userRef = doc(db, USER_COLLECTION, userId)
-  const userSnap = await getDoc(userRef)
-  if (userSnap.exists()) {
-    const userData = userSnap.data() as UserDoc
-    const boardIds = userData.boards
-    return boardIds
-  } else {
-    console.log('No such user!')
-    return []
-  }
-}
-
-export const getBoardData = async (
-  boardId: string,
-  callback: HandleDataFromServer
-) => {
-  const boardRef = doc(db, BOARD_COLLECTION, boardId)
-  const boardSnap = await getDoc(boardRef)
-  if (boardSnap.exists()) {
-    const boardData = boardSnap.data() as BoardDoc
-    console.log('Document data:', boardData)
-    callback(boardData.flowData)
-  } else {
-    // docSnap.data() will be undefined in this case
-    console.log('No such document!')
-  }
-}
-
-export const setBoardData = async (boardId: string, flowData: FlowData) => {
-  const boardRef = doc(db, BOARD_COLLECTION, boardId)
-  await setDoc(boardRef, { flowData }, { merge: true })
+export const fetchUserFlows = async (userId: string) => {
+  const qAuthor = query(
+    collection(db, FLOW_COLLECTION),
+    where('authorId', '==', userId)
+  )
+  const qMember = query(
+    collection(db, USER_FLOW_MEMBER_COLLECTION),
+    where('userId', '==', userId)
+  )
+  const qMemberSnap = await getDocs(qMember)
+  const qAuthorSnap = await getDocs(qAuthor)
+  const lstFlows = [] as string[]
+  qMemberSnap.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    const data = doc.data()
+    const { flowId } = data
+    lstFlows.push(flowId)
+    console.log(doc.id, ' => ', doc.data())
+  })
+  qAuthorSnap.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    const flowId = doc.id
+    lstFlows.push(flowId)
+    console.log(doc.id, ' => ', doc.data())
+  })
+  return lstFlows
 }

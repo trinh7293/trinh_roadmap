@@ -1,13 +1,5 @@
-import {
-  Edge,
-  Node,
-  NodeProps,
-  OnConnect,
-  OnEdgesChange,
-  OnNodesChange
-} from '@xyflow/react'
-
-export type onTextChangeFunc = (nodeId: string, label: string) => void
+import { Node, NodeProps } from '@xyflow/react'
+import { FlowRole } from './constants'
 
 export type DataNode = {
   label: string
@@ -19,45 +11,20 @@ export interface CustomNode extends Node {
   data: DataNode
 }
 
-export type AddNewNode = (node: CustomNode) => void
-export type AddNewEdge = (edge: Edge) => void
+export interface User {
+  id: string
+  name: string
+}
 
 export type AppState = {
-  user: {
-    id: string
-    boards: string[]
-  }
-  currentBoard: {
-    id: string
-  }
-  nodes: CustomNode[]
-  edges: Edge[]
-  onNodesChange: OnNodesChange<CustomNode>
-  onEdgesChange: OnEdgesChange
-  updateNodeLabel: onTextChangeFunc
-  onConnect: OnConnect
-  addNewNode: AddNewNode
-  addNewEdge: AddNewEdge
-  setNodes: (nodes: CustomNode[]) => void
-  setEdges: (edges: Edge[]) => void
-  setDataLocal: HandleDataFromServer
+  user: User
+  flows: string[]
+  currentFlowMems: User[]
+  getUserFlows: () => void
 }
 
-export type UserDoc = {
+export type Flow = {
   id: string
-  boards: string[] // boards that owned by this user
+  name: string
+  role: FlowRole // role of current user in this flow
 }
-
-export type BoardDoc = {
-  id: string
-  ownerId: string // user who own this board
-  memberId: string[] // list member of this board
-  flowData: FlowData
-}
-
-export type FlowData = {
-  nodes: CustomNode[]
-  edges: Edge[]
-}
-
-export type HandleDataFromServer = (data: FlowData) => void

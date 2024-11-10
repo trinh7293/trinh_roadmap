@@ -23,7 +23,7 @@ import { nanoid } from 'nanoid/non-secure'
 // import { DEFAULT_LABEL, EDGE_TYPE } from '../constants'
 import { DEFAULT_LABEL, EDGE_TYPE } from '@/constants'
 import { useParams } from 'react-router-dom'
-import { initProvider, liveStore } from '@/liveStore'
+import { initWSCProvider, liveStore } from '@/liveStore'
 import { isValidPosition } from '@/helper/utils'
 import { useSyncedStore } from '@syncedstore/react'
 import _ from 'lodash'
@@ -92,7 +92,8 @@ const AddNodeOnEdgeDrop = () => {
   const { flowId } = useParams()
   useEffect(() => {
     if (flowId) {
-      const { connect, disconnect } = initProvider(flowId)
+      // const { connect, disconnect } = initRTCProvider(flowId)
+      const { connect, disconnect } = initWSCProvider(flowId)
       connect()
       return () => {
         disconnect()
