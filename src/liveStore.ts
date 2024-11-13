@@ -1,6 +1,6 @@
 import { getYjsDoc, syncedStore } from '@syncedstore/core'
 import { Edge } from '@xyflow/react'
-import { CustomNode } from './types'
+import { CustomNode } from '@/types'
 import { WebrtcProvider } from 'y-webrtc'
 import { WebsocketProvider } from 'y-websocket'
 

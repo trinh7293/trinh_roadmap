@@ -1,5 +1,5 @@
 import { FLOW_COLLECTION, USER_FLOW_MEMBER_COLLECTION } from '@/constants'
-import { db } from '../firebase'
+import { db } from '@/firebase'
 import { collection, getDocs, query, where } from 'firebase/firestore'
 
 export const fetchUserFlows = async (userId: string) => {

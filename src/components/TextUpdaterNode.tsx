@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { Handle, Position } from '@xyflow/react'
-import { CustomNodeProps } from '../types'
+import { CustomNodeProps } from '@./types'
 import { useSyncedStore } from '@syncedstore/react'
 import { liveStore } from '@/liveStore'
 

@@ -17,10 +17,10 @@ import {
 // import dagre from '@dagrejs/dagre'
 import '@xyflow/react/dist/style.css'
 
-import TextUpdaterNode from '../components/TextUpdaterNode'
-import { CustomNode } from '../types'
+import TextUpdaterNode from '@/components/TextUpdaterNode'
+import { CustomNode } from '@/types'
 import { nanoid } from 'nanoid/non-secure'
-// import { DEFAULT_LABEL, EDGE_TYPE } from '../constants'
+// import { DEFAULT_LABEL, EDGE_TYPE } from '@/constants'
 import { DEFAULT_LABEL, EDGE_TYPE } from '@/constants'
 import { useParams } from 'react-router-dom'
 import { initWSCProvider, liveStore } from '@/liveStore'
