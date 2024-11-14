@@ -11,10 +11,7 @@ import {
 } from 'firebase/firestore'
 import { nanoid } from 'nanoid/non-secure'
 
-export const unsubUserFlows = async (
-  userId: string,
-  cb: (flows: Flow[]) => void
-) => {
+export const unsubUserFlows = (userId: string, cb: (flows: Flow[]) => void) => {
   const qAuthor = query(
     collection(db, FLOW_COLLECTION),
     where('authorId', '==', userId)

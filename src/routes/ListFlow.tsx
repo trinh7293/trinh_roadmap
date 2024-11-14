@@ -45,7 +45,12 @@ const ListFlow = () => {
   }
   useEffect(() => {
     if (user) {
-      unsubUserFlows(user.uid, setFlows)
+      const unsubLstFlow = unsubUserFlows(user.uid, setFlows)
+      console.log('unsubscribed list flow successfully')
+      return () => {
+        unsubLstFlow()
+        console.log('unsubscribed list flow successfully')
+      }
     }
   }, [user])
   return (
