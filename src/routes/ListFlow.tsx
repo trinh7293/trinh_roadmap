@@ -7,10 +7,11 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import Modal from 'react-bootstrap/Modal'
 import { logOutService } from '@/services/authService'
+import { addFlowService, unsubUserFlows } from '@/services/flowService'
 const selector = (state: AppState) => ({
   user: state.user,
   flows: state.flows,
-  getUserFlows: state.getUserFlows
+  setFlows: state.setFlows
 })
 
 const ListFlow = () => {
@@ -29,25 +30,38 @@ const ListFlow = () => {
       return <Link to={'./login'}>Login</Link>
     }
   }
-  const { user, flows, getUserFlows } = useMainStore(useShallow(selector))
+  const { user, flows, setFlows } = useMainStore(useShallow(selector))
   const [show, setShow] = useState(false)
+  const [flowName, setFlowName] = useState('')
+  const [flowDes, setFlowDes] = useState('')
 
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
+  const handleAddFlow = async () => {
+    if (user) {
+      await addFlowService(user.uid, flowName, flowDes)
+      setShow(false)
+    }
+  }
   useEffect(() => {
     if (user) {
-      getUserFlows()
+      unsubUserFlows(user.uid, setFlows)
     }
-  }, [])
+  }, [user])
   return (
     <div>
       user: {JSON.stringify(user)}
+      <br />
       status: {user ? 'logged in' : 'guest'}
+      <br />
       {authBtn()}
+      <br />
       flows: {!user && 'you need login to save works'}
-      {flows.map((fl) => (
-        <div key={fl}>
-          to <Link to={`./flow/${fl}`}>{fl}</Link>
+      <br />
+      {JSON.stringify(flows, null, 2)}
+      {flows.map((fl, index) => (
+        <div key={index}>
+          to <Link to={`./flow/${fl.id}`}>{fl.name}</Link>
         </div>
       ))}
       <Button variant='primary' onClick={handleShow}>
@@ -62,8 +76,10 @@ const ListFlow = () => {
             <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
               <Form.Label>Name</Form.Label>
               <Form.Control
-                type='email'
-                placeholder='name@example.com'
+                type='text'
+                value={flowName}
+                onChange={(e) => setFlowName(e.target.value)}
+                placeholder='name'
                 autoFocus
               />
             </Form.Group>
@@ -72,7 +88,12 @@ const ListFlow = () => {
               controlId='exampleForm.ControlTextarea1'
             >
               <Form.Label>Description</Form.Label>
-              <Form.Control as='textarea' rows={3} />
+              <Form.Control
+                value={flowDes}
+                onChange={(e) => setFlowDes(e.target.value)}
+                as='textarea'
+                rows={3}
+              />
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -80,8 +101,8 @@ const ListFlow = () => {
           <Button variant='secondary' onClick={handleClose}>
             Close
           </Button>
-          <Button variant='primary' onClick={handleClose}>
-            Save Changes
+          <Button variant='primary' onClick={handleAddFlow}>
+            Save Flow
           </Button>
         </Modal.Footer>
       </Modal>

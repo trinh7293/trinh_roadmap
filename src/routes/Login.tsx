@@ -2,13 +2,15 @@ import { signInService } from '@/services/authService'
 import { useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Login() {
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
+  const navi = useNavigate()
   const handleLogin = async () => {
     await signInService(email, pass)
+    navi('/')
   }
   return (
     <Form>
@@ -32,7 +34,7 @@ function Login() {
         />
       </Form.Group>
       <Form.Text className='text-muted'>
-        Don&apos;t have account? Please <Link to={'./signup'}>Sign up</Link>
+        Don&apos;t have account? Please <Link to={'/signup'}>Sign up</Link>
       </Form.Text>
       <Button variant='primary' onClick={handleLogin}>
         Sign In

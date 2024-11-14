@@ -1,26 +1,35 @@
-import { Outlet, useNavigate } from 'react-router-dom'
-import { useShallow } from 'zustand/shallow'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '@/firebase'
+import { logOutService } from '@/services/authService'
 import useMainStore from '@/store'
 import { AppState } from '@/types'
+import { Button } from 'react-bootstrap'
+import { Outlet, useNavigate } from 'react-router-dom'
+import { useShallow } from 'zustand/shallow'
+
 const selector = (state: AppState) => ({
-  setUser: state.setUser,
-  clearAuth: state.clearAuth
+  user: state.user
 })
 function AuthLayout() {
-  const { setUser, clearAuth } = useMainStore(useShallow(selector))
+  const { user } = useMainStore(useShallow(selector))
   const navi = useNavigate()
-  onAuthStateChanged(auth, (user) => {
+  const handleLogOut = async () => {
+    await logOutService()
+  }
+  const handleLogIn = async () => {
+    navi('/login')
+  }
+  const authBtn = () => {
     if (user) {
-      setUser(user)
-      navi('./')
+      return <Button onClick={handleLogOut}> Log Out</Button>
     } else {
-      clearAuth()
-      navi('./')
+      return <Button onClick={handleLogIn}>Login</Button>
     }
-  })
-  return <Outlet />
+  }
+  return (
+    <div>
+      <div>{authBtn()}</div>
+      <Outlet></Outlet>
+    </div>
+  )
 }
 
 export default AuthLayout

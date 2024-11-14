@@ -10,13 +10,13 @@ import { doc, setDoc } from 'firebase/firestore'
 export const signUpService = async (
   email: string,
   pass: string,
-  displayName: string = ''
+  displayName: string | null = null
 ) => {
   try {
     const userCre = await createUserWithEmailAndPassword(auth, email, pass)
     const user = userCre.user
     const { uid } = user
-    await saveUsertoFireStore(uid, email, displayName, pass)
+    await saveUsertoFireStore(uid, email, displayName || email, pass)
     console.log('sign up success : ', user)
     return user
   } catch (error) {

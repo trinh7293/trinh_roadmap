@@ -1,5 +1,4 @@
 import { Node, NodeProps } from '@xyflow/react'
-import { FlowRole } from '@/constants'
 import { User } from 'firebase/auth'
 
 export type DataNode = {
@@ -14,15 +13,17 @@ export interface CustomNode extends Node {
 
 export type AppState = {
   user: User | null
-  flows: string[]
+  flows: Flow[]
   currentFlowMems: User[]
-  getUserFlows: () => void
+  // getUserFlows: () => void
+  setFlows: (flows: Flow[]) => void
   setUser: (user: User) => void
   clearAuth: () => void
 }
 
 export type Flow = {
-  id: string
+  id?: string
   name: string
-  role: FlowRole // role of current user in this flow
+  description: string
+  authorId: string
 }

@@ -2,12 +2,16 @@ import { signUpService } from '@/services/authService'
 import { useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
+import { useNavigate } from 'react-router-dom'
 
 function Signup() {
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
+  const navi = useNavigate()
+
   const handleSignup = async () => {
     await signUpService(email, pass)
+    navi('/')
   }
   return (
     <Form>
