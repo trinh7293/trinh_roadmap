@@ -1,11 +1,11 @@
+import useLiveStore from '@/liveZustandStore'
+import { NodeTypeEnum } from '@/types'
 import { DragEvent } from 'react'
-import { DnDContextType, NodeTypeEnum, useDnD } from './DnDContext'
-
 export default function Sidebar() {
-  const { updateNodeType } = useDnD() as DnDContextType
+  const { setCurrType } = useLiveStore()
 
   const onDragStart = (event: DragEvent, nodeType: NodeTypeEnum) => {
-    updateNodeType(nodeType)
+    setCurrType(nodeType)
     event.dataTransfer.effectAllowed = 'move'
   }
 

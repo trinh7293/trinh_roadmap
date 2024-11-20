@@ -1,44 +1,41 @@
-import { useRef, useCallback, DragEvent } from 'react'
+import { useRef, useCallback, DragEvent, useEffect } from 'react'
 import {
   ReactFlow,
   ReactFlowProvider,
-  addEdge,
-  useNodesState,
-  useEdgesState,
   Controls,
   useReactFlow,
-  Background,
-  OnConnect
+  Background
 } from '@xyflow/react'
 
 import '@xyflow/react/dist/style.css'
-
+import '@/styles/Flow.css'
+// import Sidebar from '@/components/Sidebar'
+import useLiveStore from '@/liveZustandStore'
 import Sidebar from '@/components/Sidebar'
-import { DnDContextType, DnDProvider, useDnD } from '@/components/DnDContext'
-
-const initialNodes = [
-  {
-    id: '1',
-    type: 'input',
-    data: { label: 'input node' },
-    position: { x: 250, y: 5 }
-  }
-]
 
 let id = 0
 const getId = () => `dndnode_${id++}`
 
 const DnDFlow = () => {
-  const reactFlowWrapper = useRef(null)
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState([])
-  const { screenToFlowPosition } = useReactFlow()
-  const { nodeType } = useDnD() as DnDContextType
+  const {
+    liveblocks: { enterRoom, leaveRoom, isStorageLoading },
+    nodes,
+    edges,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    setNodes,
+    currType
+  } = useLiveStore()
+  const roomId = 'room1'
+  // Enter the Liveblocks room on load
+  useEffect(() => {
+    enterRoom(roomId)
+    return () => leaveRoom()
+  }, [enterRoom, leaveRoom])
 
-  const onConnect: OnConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
-    []
-  )
+  const reactFlowWrapper = useRef(null)
+  const { screenToFlowPosition } = useReactFlow()
 
   const onDragOver = useCallback((event: DragEvent) => {
     event.preventDefault()
@@ -50,7 +47,7 @@ const DnDFlow = () => {
       event.preventDefault()
 
       // check if the dropped element is valid
-      if (!nodeType) {
+      if (!currType) {
         return
       }
 
@@ -63,16 +60,23 @@ const DnDFlow = () => {
       })
       const newNode = {
         id: getId(),
-        type: nodeType,
+        type: currType,
         position,
-        data: { label: `${nodeType} node` }
+        data: { label: `${currType} node` }
       }
 
-      setNodes((nds) => nds.concat(newNode))
+      setNodes([...nodes, newNode])
     },
-    [screenToFlowPosition, nodeType]
+    [screenToFlowPosition, currType]
   )
 
+  if (isStorageLoading) {
+    return (
+      <div className='loading'>
+        <img src='https://liveblocks.io/loading.svg' alt='Loading' />
+      </div>
+    )
+  }
   return (
     <div className='dndflow'>
       <div className='reactflow-wrapper' ref={reactFlowWrapper}>
@@ -99,9 +103,7 @@ const DnDFlow = () => {
 export default function Flow() {
   return (
     <ReactFlowProvider>
-      <DnDProvider>
-        <DnDFlow />
-      </DnDProvider>
+      <DnDFlow />
     </ReactFlowProvider>
   )
 }
