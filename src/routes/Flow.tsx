@@ -27,7 +27,7 @@ const DnDFlow = () => {
     setNodes,
     currType
   } = useLiveStore()
-  const roomId = 'room1'
+  const roomId = 'room3'
   // Enter the Liveblocks room on load
   useEffect(() => {
     enterRoom(roomId)
