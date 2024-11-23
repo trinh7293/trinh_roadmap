@@ -1,10 +1,13 @@
-import { create } from 'zustand'
+import { AppSlice, Flow, FlowSlice } from '@/types'
+import { User as FirebaseUser } from 'firebase/auth'
+import { StateCreator } from 'zustand'
 
-import { Flow, type AppState } from '@/types'
-import { User } from 'firebase/auth'
-
-// this is our useStore hook that we can use in our components to get parts of the store and call actions
-const useMainStore = create<AppState>((set) => ({
+export const createAppSlice: StateCreator<
+  AppSlice & FlowSlice,
+  [],
+  [],
+  AppSlice
+> = (set) => ({
   user: null,
   flows: [],
   currentFlowMems: [],
@@ -23,7 +26,7 @@ const useMainStore = create<AppState>((set) => ({
       flows
     })
   },
-  setUser: (user: User) => {
+  setUser: (user: FirebaseUser) => {
     set({ user })
   },
   clearAuth: () => {
@@ -33,6 +36,4 @@ const useMainStore = create<AppState>((set) => ({
       currentFlowMems: []
     })
   }
-}))
-
-export default useMainStore
+})

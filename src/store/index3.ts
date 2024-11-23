@@ -1,4 +1,4 @@
-import { FlowSlice, NodeTypeEnum } from './types'
+import { FlowSlice, NodeTypeEnum } from '@/types'
 import {
   addEdge,
   applyEdgeChanges,

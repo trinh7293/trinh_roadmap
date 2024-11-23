@@ -7,7 +7,13 @@ import {
 } from '@xyflow/react'
 import { User } from 'firebase/auth'
 
-export type AppState = {
+export enum NodeTypeEnum {
+  INPUT = 'input',
+  DEFAULT = 'default',
+  OUTPUT = 'output'
+}
+
+export interface AppSlice {
   user: User | null
   flows: Flow[]
   currentFlowMems: User[]
@@ -17,13 +23,7 @@ export type AppState = {
   clearAuth: () => void
 }
 
-export enum NodeTypeEnum {
-  INPUT = 'input',
-  DEFAULT = 'default',
-  OUTPUT = 'output'
-}
-
-export type LiveState = {
+export interface FlowSlice {
   nodes: Node[]
   edges: Edge[]
   onNodesChange: OnNodesChange
@@ -40,3 +40,7 @@ export type Flow = {
   description: string
   authorId: string
 }
+
+// export type FlowPropTypes = {
+//   flowIdProp: string | undefined
+// }

@@ -10,12 +10,14 @@ import {
 import '@xyflow/react/dist/style.css'
 import '@/styles/Flow.css'
 // import Sidebar from '@/components/Sidebar'
-import useLiveStore from '@/liveZustandStore'
 import Sidebar from '@/components/Sidebar'
+import { useParams } from 'react-router-dom'
+import { nanoid } from 'nanoid/non-secure'
+import useBoundStore from '@/store'
 
-let id = 0
-const getId = () => `dndnode_${id++}`
+// import { FlowPropTypes } from '@/types'
 
+// const DnDFlow: FC<FlowPropTypes> = (props) => {
 const DnDFlow = () => {
   const {
     liveblocks: { enterRoom, leaveRoom, isStorageLoading },
@@ -26,12 +28,23 @@ const DnDFlow = () => {
     onConnect,
     setNodes,
     currType
-  } = useLiveStore()
-  const roomId = 'room3'
+  } = useBoundStore()
+  let { flowId } = useParams()
+  if (!flowId) {
+    flowId = nanoid()
+  }
+  // const { flowId: flowIdRouter } = useParams()
+  // const { flowIdProp } = props
+  // const flowId = flowIdRouter || flowIdProp
+  // const flowId = 'room3'
   // Enter the Liveblocks room on load
   useEffect(() => {
-    enterRoom(roomId)
-    return () => leaveRoom()
+    if (flowId) {
+      enterRoom(flowId)
+      return () => leaveRoom()
+    } else {
+      console.log('room id not specified')
+    }
   }, [enterRoom, leaveRoom])
 
   const reactFlowWrapper = useRef(null)
@@ -59,7 +72,7 @@ const DnDFlow = () => {
         y: event.clientY
       })
       const newNode = {
-        id: getId(),
+        id: nanoid(),
         type: currType,
         position,
         data: { label: `${currType} node` }
@@ -70,6 +83,9 @@ const DnDFlow = () => {
     [screenToFlowPosition, currType]
   )
 
+  if (!flowId) {
+    return <div>flow id not specified huhu</div>
+  }
   if (isStorageLoading) {
     return (
       <div className='loading'>
@@ -99,6 +115,14 @@ const DnDFlow = () => {
     </div>
   )
 }
+
+// const Flow: FC<FlowPropTypes> = (props) => {
+//   return (
+//     <ReactFlowProvider>
+//       <DnDFlow />
+//     </ReactFlowProvider>
+//   )
+// }
 
 export default function Flow() {
   return (

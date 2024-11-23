@@ -1,8 +1,8 @@
-import useLiveStore from '@/liveZustandStore'
+import useBoundStore from '@/store'
 import { NodeTypeEnum } from '@/types'
 import { DragEvent } from 'react'
 export default function Sidebar() {
-  const { setCurrType } = useLiveStore()
+  const { setCurrType } = useBoundStore()
 
   const onDragStart = (event: DragEvent, nodeType: NodeTypeEnum) => {
     setCurrType(nodeType)

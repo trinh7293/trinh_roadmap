@@ -1,18 +1,11 @@
-import useMainStore from '@/store'
-import { AppState } from '@/types'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useShallow } from 'zustand/shallow'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import Modal from 'react-bootstrap/Modal'
 import { logOutService } from '@/services/authService'
 import { addFlowService, unsubUserFlows } from '@/services/flowService'
-const selector = (state: AppState) => ({
-  user: state.user,
-  flows: state.flows,
-  setFlows: state.setFlows
-})
+import useBoundStore from '@/store'
 
 const ListFlow = () => {
   // const navi = useNavigate()
@@ -30,7 +23,7 @@ const ListFlow = () => {
       return <Link to={'./login'}>Login</Link>
     }
   }
-  const { user, flows, setFlows } = useMainStore(useShallow(selector))
+  const { user, flows, setFlows } = useBoundStore()
   const [show, setShow] = useState(false)
   const [flowName, setFlowName] = useState('')
   const [flowDes, setFlowDes] = useState('')
@@ -46,7 +39,7 @@ const ListFlow = () => {
   useEffect(() => {
     if (user) {
       const unsubLstFlow = unsubUserFlows(user.uid, setFlows)
-      console.log('unsubscribed list flow successfully')
+      console.log('subscribed list flow successfully')
       return () => {
         unsubLstFlow()
         console.log('unsubscribed list flow successfully')
@@ -66,7 +59,7 @@ const ListFlow = () => {
       {JSON.stringify(flows, null, 2)}
       {flows.map((fl, index) => (
         <div key={index}>
-          to <Link to={`./flow/${fl.id}`}>{fl.name}</Link>
+          to <Link to={`/flow/${fl.id}`}>{fl.name}</Link>
         </div>
       ))}
       <Button variant='primary' onClick={handleShow}>
