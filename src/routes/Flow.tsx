@@ -4,14 +4,14 @@ import {
   ReactFlowProvider,
   Controls,
   useReactFlow,
-  Background
+  Background,
+  Panel
 } from '@xyflow/react'
 
 import '@xyflow/react/dist/style.css'
-import '@/styles/Flow.css'
 // import Sidebar from '@/components/Sidebar'
 import Sidebar from '@/components/Sidebar'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { nanoid } from 'nanoid/non-secure'
 import useBoundStore from '@/store'
 
@@ -29,10 +29,12 @@ const DnDFlow = () => {
     setNodes,
     currType
   } = useBoundStore()
-  let { flowId } = useParams()
-  if (!flowId) {
-    flowId = nanoid()
-  }
+  const { flowId } = useParams()
+  // if (!flowId) {
+  //   // const genId = nanoid()
+  //   flowId = 'demo-room'
+  //   console.log('flowId generated', flowId)
+  // }
   // const { flowId: flowIdRouter } = useParams()
   // const { flowIdProp } = props
   // const flowId = flowIdRouter || flowIdProp
@@ -46,6 +48,7 @@ const DnDFlow = () => {
       console.log('room id not specified')
     }
   }, [enterRoom, leaveRoom])
+  // TODO delete room when all leave
 
   const reactFlowWrapper = useRef(null)
   const { screenToFlowPosition } = useReactFlow()
@@ -82,6 +85,7 @@ const DnDFlow = () => {
     },
     [screenToFlowPosition, currType]
   )
+  const navi = useNavigate()
 
   if (!flowId) {
     return <div>flow id not specified huhu</div>
@@ -94,24 +98,29 @@ const DnDFlow = () => {
     )
   }
   return (
-    <div className='dndflow'>
-      <div className='reactflow-wrapper' ref={reactFlowWrapper}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          fitView
-          style={{ backgroundColor: '#F7F9FB' }}
-        >
-          <Controls />
-          <Background />
-        </ReactFlow>
+    <div id='flowContainer'>
+      <div className='dndflow'>
+        <div className='reactflow-wrapper' ref={reactFlowWrapper}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            fitView
+            style={{ backgroundColor: '#F7F9FB' }}
+          >
+            <Panel position='top-left' onClick={() => navi('/')}>
+              Go home
+            </Panel>
+            <Controls />
+            <Background />
+          </ReactFlow>
+        </div>
+        <Sidebar />
       </div>
-      <Sidebar />
     </div>
   )
 }
