@@ -1,14 +1,33 @@
 import useBoundStore from '@/store'
 import { NodeTypeEnum } from '@/types'
 import { DragEvent } from 'react'
+import { Form } from 'react-bootstrap'
 export default function Sidebar() {
-  const { setCurrType } = useBoundStore()
+  const { setCurrType, edittingNode, updateNodeLabel } = useBoundStore()
 
   const onDragStart = (event: DragEvent, nodeType: NodeTypeEnum) => {
     setCurrType(nodeType)
     event.dataTransfer.effectAllowed = 'move'
   }
-
+  const renderEditArea = () => {
+    const editingN = edittingNode()
+    if (editingN) {
+      return (
+        <Form>
+          <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+            <Form.Label>Edit label</Form.Label>
+            <Form.Control
+              type='text'
+              value={editingN.label}
+              onChange={(e) => updateNodeLabel(e.target.value)}
+              placeholder='name'
+              autoFocus
+            />
+          </Form.Group>
+        </Form>
+      )
+    }
+  }
   return (
     <aside>
       <div className='description'>
@@ -35,6 +54,7 @@ export default function Sidebar() {
       >
         Output Node
       </div>
+      {renderEditArea()}
     </aside>
   )
 }

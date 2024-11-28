@@ -23,13 +23,21 @@ export interface AppSlice {
   clearAuth: () => void
 }
 
+export type EdittingNode = {
+  label: string
+}
+
 export interface FlowSlice {
   nodes: Node[]
   edges: Edge[]
   onNodesChange: OnNodesChange
   onEdgesChange: OnEdgesChange
   onConnect: OnConnect
+  onNodeClick: (event: React.MouseEvent, node: Node) => void
   setNodes: (nodes: Node[]) => void
+  edditingNodeId: string | null
+  edittingNode: () => EdittingNode | null
+  updateNodeLabel: (label: string) => void
   currType: NodeTypeEnum | null // current dragging node
   setCurrType: (nt: NodeTypeEnum) => void
 }
@@ -40,7 +48,3 @@ export type Flow = {
   description: string
   authorId: string
 }
-
-// export type FlowPropTypes = {
-//   flowIdProp: string | undefined
-// }

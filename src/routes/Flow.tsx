@@ -26,6 +26,7 @@ const DnDFlow = () => {
     onNodesChange,
     onEdgesChange,
     onConnect,
+    onNodeClick,
     setNodes,
     currType
   } = useBoundStore()
@@ -86,7 +87,6 @@ const DnDFlow = () => {
     [screenToFlowPosition, currType]
   )
   const navi = useNavigate()
-
   if (!flowId) {
     return <div>flow id not specified huhu</div>
   }
@@ -109,6 +109,7 @@ const DnDFlow = () => {
             onConnect={onConnect}
             onDrop={onDrop}
             onDragOver={onDragOver}
+            onNodeClick={onNodeClick}
             fitView
             style={{ backgroundColor: '#F7F9FB' }}
           >

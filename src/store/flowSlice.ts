@@ -35,6 +35,36 @@ export const createFlowSlice: StateCreator<
       edges: addEdge(connection, get().edges)
     })
   },
+  edditingNodeId: null,
+  edittingNode: () => {
+    const nId = get().edditingNodeId
+    if (nId) {
+      const n = get().nodes.find((n) => n.id === nId)
+      if (n) {
+        const result = {
+          label: n.data.label as string
+        }
+        return result
+      }
+    }
+    return null
+  },
+  updateNodeLabel: (label) => {
+    const edittingId = get().edditingNodeId
+    set({
+      nodes: get().nodes.map((n) => {
+        if (n.id === edittingId) {
+          return { ...n, data: { ...n.data, label } }
+        }
+        return n
+      })
+    })
+  },
+  onNodeClick: (_, node) => {
+    set({
+      edditingNodeId: node.id
+    })
+  },
   setNodes: (nodes: AppNode[]) => {
     set({
       nodes
