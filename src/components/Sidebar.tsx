@@ -13,7 +13,11 @@ export default function Sidebar() {
     const editingN = edittingNode()
     if (editingN) {
       return (
-        <Form>
+        <Form
+          onSubmit={(e) => {
+            e.preventDefault()
+          }}
+        >
           <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
             <Form.Label>Edit label</Form.Label>
             <Form.Control

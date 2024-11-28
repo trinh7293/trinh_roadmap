@@ -116,48 +116,6 @@ const ListFlow = () => {
         </div>
       ))}
       {renderAddFlow()}
-      {/* <Button variant='primary' onClick={handleShow}>
-        Create new Flow
-      </Button>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Create new Flow</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                type='text'
-                value={flowName}
-                onChange={(e) => setFlowName(e.target.value)}
-                placeholder='name'
-                autoFocus
-              />
-            </Form.Group>
-            <Form.Group
-              className='mb-3'
-              controlId='exampleForm.ControlTextarea1'
-            >
-              <Form.Label>Description</Form.Label>
-              <Form.Control
-                value={flowDes}
-                onChange={(e) => setFlowDes(e.target.value)}
-                as='textarea'
-                rows={3}
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant='secondary' onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant='primary' onClick={handleAddFlow}>
-            Save Flow
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
     </div>
   )
 }
