@@ -36,6 +36,59 @@ const ListFlow = () => {
       setShow(false)
     }
   }
+  const renderAddFlow = () => {
+    if (user) {
+      return (
+        <>
+          <Button variant='primary' onClick={handleShow}>
+            Create new Flow
+          </Button>
+          <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Create new Flow</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group
+                  className='mb-3'
+                  controlId='exampleForm.ControlInput1'
+                >
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control
+                    type='text'
+                    value={flowName}
+                    onChange={(e) => setFlowName(e.target.value)}
+                    placeholder='name'
+                    autoFocus
+                  />
+                </Form.Group>
+                <Form.Group
+                  className='mb-3'
+                  controlId='exampleForm.ControlTextarea1'
+                >
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    value={flowDes}
+                    onChange={(e) => setFlowDes(e.target.value)}
+                    as='textarea'
+                    rows={3}
+                  />
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant='secondary' onClick={handleClose}>
+                Close
+              </Button>
+              <Button variant='primary' onClick={handleAddFlow}>
+                Save Flow
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+      )
+    }
+  }
   useEffect(() => {
     if (user) {
       const unsubLstFlow = unsubUserFlows(user.uid, setFlows)
@@ -48,10 +101,10 @@ const ListFlow = () => {
   }, [user])
   return (
     <div>
-      user: {JSON.stringify(user)}
+      {/* user: {JSON.stringify(user)}
       <br />
       status: {user ? 'logged in' : 'guest'}
-      <br />
+      <br /> */}
       {authBtn()}
       <br />
       flows: {!user && 'you need login to save works'}
@@ -62,7 +115,8 @@ const ListFlow = () => {
           to <Link to={`/flow/${fl.id}`}>{fl.name}</Link>
         </div>
       ))}
-      <Button variant='primary' onClick={handleShow}>
+      {renderAddFlow()}
+      {/* <Button variant='primary' onClick={handleShow}>
         Create new Flow
       </Button>
       <Modal show={show} onHide={handleClose}>
@@ -103,7 +157,7 @@ const ListFlow = () => {
             Save Flow
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </div>
   )
 }

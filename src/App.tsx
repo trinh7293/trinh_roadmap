@@ -7,7 +7,7 @@ import Login from './routes/Login'
 import Signup from './routes/SignUp'
 // import Welcome from './routes/Welcome'
 import ListenerAuthLayout from './routes/ListenerAuthLayout'
-import Welcome from './routes/Welcome'
+// import Welcome from './routes/Welcome'
 // import Demo from './routes/Welcome'
 
 const App = () => {
@@ -18,8 +18,8 @@ const App = () => {
           <Route path='flow/:flowId' element={<Flow />}></Route>
         </Route> */}
         <Route path='/' element={<ListenerAuthLayout />}>
-          <Route index element={<Welcome />}></Route>
-          <Route path='listFlow' element={<ListFlow />}></Route>
+          {/* <Route index element={<Welcome />}></Route> */}
+          <Route index element={<ListFlow />}></Route>
           <Route path='flow/:flowId' element={<Flow />}></Route>
           <Route path='demo' element={<Flow />}></Route>
           <Route path='login' element={<Login />}></Route>
