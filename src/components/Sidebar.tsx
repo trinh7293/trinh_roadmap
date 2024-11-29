@@ -25,7 +25,6 @@ export default function Sidebar() {
               value={editingN.label}
               onChange={(e) => updateNodeLabel(e.target.value)}
               placeholder='name'
-              autoFocus
             />
           </Form.Group>
         </Form>

@@ -58,7 +58,23 @@ const DnDFlow = () => {
     event.preventDefault()
     event.dataTransfer.dropEffect = 'move'
   }, [])
+  const addNodeByEvent = useCallback(
+    (e: DragEvent | React.MouseEvent) => {
+      const position = screenToFlowPosition({
+        x: e.clientX,
+        y: e.clientY
+      })
+      const newNode = {
+        id: nanoid(),
+        type: 'default',
+        position,
+        data: { label: 'New node' }
+      }
 
+      setNodes([...nodes, newNode])
+    },
+    [screenToFlowPosition, nodes]
+  )
   const onDrop = useCallback(
     (event: DragEvent) => {
       event.preventDefault()
@@ -71,22 +87,16 @@ const DnDFlow = () => {
       // project was renamed to screenToFlowPosition
       // and you don't need to subtract the reactFlowBounds.left/top anymore
       // details: https://reactflow.dev/whats-new/2023-11-10
-      const position = screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY
-      })
-      const newNode = {
-        id: nanoid(),
-        type: currType,
-        position,
-        data: { label: `${currType} node` }
-      }
-
-      setNodes([...nodes, newNode])
+      addNodeByEvent(event)
     },
     [screenToFlowPosition, currType]
   )
   const navi = useNavigate()
+  const onBgClick = (e: React.MouseEvent) => {
+    if (e.ctrlKey) {
+      addNodeByEvent(e)
+    }
+  }
   if (!flowId) {
     return <div>flow id not specified huhu</div>
   }
@@ -102,6 +112,7 @@ const DnDFlow = () => {
       <div className='dndflow'>
         <div className='reactflow-wrapper' ref={reactFlowWrapper}>
           <ReactFlow
+            onClick={onBgClick}
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
