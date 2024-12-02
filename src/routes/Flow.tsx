@@ -108,7 +108,7 @@ const DnDFlow = () => {
     )
   }
   return (
-    <div id='flowContainer'>
+    <div id='app'>
       <div className='dndflow'>
         <div className='reactflow-wrapper' ref={reactFlowWrapper}>
           <ReactFlow
